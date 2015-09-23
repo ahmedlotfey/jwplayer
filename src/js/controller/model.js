@@ -14,10 +14,10 @@ define([
     // Represents the state of the player
     var Model = function() {
         var _this = this,
-            // Video provider
+        // Video provider
             _providers,
             _provider,
-            // Saved settings
+        // Saved settings
             _cookies = {},
             _currentProvider = utils.noop;
 
@@ -96,12 +96,12 @@ define([
 
                 case events.JWPLAYER_MEDIA_BUFFER_FULL:
                     // media controller
-                    if(this.mediaModel.get('playAttempt')) {
+                    if(this.get('playAttempt')) {
                         this.playVideo();
                     } else {
-                       this.mediaModel.on('change:playAttempt', function() {
-                           this.playVideo();
-                       }, this);
+                        this.on('change:playAttempt', function() {
+                            this.playVideo();
+                        }, this);
                     }
                     break;
 
@@ -248,8 +248,8 @@ define([
                 _this.changeVideoProvider(Provider);
             }
 
-            // this allows the providers to preload
-            if (_currentProvider.init) {
+            // this allows the providers to preload when playAttempt is not called so that next playlist loads normally
+            if (_currentProvider.init && !this.get('playAttempt')) {
                 _currentProvider.init(item);
             }
 
@@ -288,7 +288,7 @@ define([
 
         // The model is also the mediaController for now
         this.loadVideo = function(item) {
-            this.mediaModel.set('playAttempt', true);
+            this.set('playAttempt', true);
             this.mediaController.trigger(events.JWPLAYER_MEDIA_PLAY_ATTEMPT);
             if (!item) {
                 var idx = this.get('item');
